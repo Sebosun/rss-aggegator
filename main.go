@@ -43,7 +43,9 @@ func main() {
 
 	mux.HandleFunc("GET /v1/healthz", apiConfig.HandleHealthcheck)
 	mux.HandleFunc("GET /v1/err", apiConfig.HandleErr)
-	mux.HandleFunc("POST /v1/createUser", apiConfig.CreateUser)
+
+	mux.HandleFunc("POST /v1/user", apiConfig.CreateUser)
+	mux.HandleFunc("GET /v1/user", apiConfig.GetUser)
 
 	corsMux := corsMiddleware(mux)
 
