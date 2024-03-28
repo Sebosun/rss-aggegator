@@ -44,11 +44,11 @@ func main() {
 	mux.HandleFunc("GET /v1/healthz", apiConfig.HandleHealthcheck)
 	mux.HandleFunc("GET /v1/err", apiConfig.HandleErr)
 
-	mux.HandleFunc("GET /v1/user", apiConfig.GetUser)
+	mux.HandleFunc("GET /v1/user", apiConfig.MiddlewareAuth(apiConfig.GetUser))
 	mux.HandleFunc("POST /v1/user", apiConfig.CreateUser)
 
-	/* mux.HandleFunc("GET /v1/feeds", apiConfig.GetUser) */
-	mux.HandleFunc("POST /v1/feeds", apiConfig.CreateFeed)
+	/* mux.HandleFunc("GET /v1/feeds", apiConfig.MiddlewareAuth(apiConfig.GetFeed)) */
+	mux.HandleFunc("POST /v1/feeds", apiConfig.MiddlewareAuth(apiConfig.CreateFeed))
 
 	corsMux := corsMiddleware(mux)
 

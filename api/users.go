@@ -58,19 +58,6 @@ func (cfg *ApiConfig) CreateUser(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusOK, DBUserToUser(user))
 }
 
-func (cfg *ApiConfig) GetUser(w http.ResponseWriter, r *http.Request) {
-	apiKey, err := parseHeaders(r)
-	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "No authorization header found")
-		return
-	}
-
-	user, err := cfg.DB.GetUser(r.Context(), apiKey)
-
-	if err != nil {
-		respondWithError(w, http.StatusNotFound, "Couldnt get user with provided token")
-		return
-	}
-
+func (cfg *ApiConfig) GetUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	respondWithJson(w, http.StatusOK, DBUserToUser(user))
 }

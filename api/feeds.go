@@ -31,27 +31,13 @@ func DBFeedToFeed(feed database.Feed) Feed {
 	}
 }
 
-func (cfg *ApiConfig) CreateFeed(w http.ResponseWriter, r *http.Request) {
-	// TODO: middleware to handle auth
-	apiKey, err := parseHeaders(r)
-	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "No authorization header found")
-		return
-	}
-
+func (cfg *ApiConfig) CreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	decoder := json.NewDecoder(r.Body)
 	params := GetFeedsPayload{}
-	err = decoder.Decode(&params)
+	err := decoder.Decode(&params)
 
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid parameters")
-		return
-	}
-
-	user, err := cfg.DB.GetUser(r.Context(), apiKey)
-
-	if err != nil {
-		respondWithError(w, http.StatusNotFound, "Couldnt get user with provided token")
 		return
 	}
 
@@ -63,7 +49,6 @@ func (cfg *ApiConfig) CreateFeed(w http.ResponseWriter, r *http.Request) {
 		UserID:    user.ID,
 	}
 
-	// TODO better query
 	feed, err := cfg.DB.CreateFeed(r.Context(), feedPayload)
 
 	if err != nil {
