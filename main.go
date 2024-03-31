@@ -40,6 +40,7 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
+	corsMux := corsMiddleware(mux)
 
 	mux.HandleFunc("GET /v1/healthz", apiConfig.HandleHealthcheck)
 	mux.HandleFunc("GET /v1/err", apiConfig.HandleErr)
@@ -47,10 +48,8 @@ func main() {
 	mux.HandleFunc("GET /v1/user", apiConfig.MiddlewareAuth(apiConfig.GetUser))
 	mux.HandleFunc("POST /v1/user", apiConfig.CreateUser)
 
-	/* mux.HandleFunc("GET /v1/feeds", apiConfig.MiddlewareAuth(apiConfig.GetFeed)) */
 	mux.HandleFunc("POST /v1/feeds", apiConfig.MiddlewareAuth(apiConfig.CreateFeed))
-
-	corsMux := corsMiddleware(mux)
+	mux.HandleFunc("POST /v1/feed_follows", apiConfig.MiddlewareAuth(apiConfig.FollowFeed))
 
 	srv := &http.Server{
 		Addr:    ":" + port,

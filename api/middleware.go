@@ -1,15 +1,15 @@
 package api
 
 import (
-	"github.com/sebosun/rss-agg/internal/database"
 	"net/http"
+
+	"github.com/sebosun/rss-agg/internal/database"
 )
 
 type authedHandler func(http.ResponseWriter, *http.Request, database.User)
 
 func (cfg *ApiConfig) MiddlewareAuth(handler authedHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
 		apiKey, err := parseHeaders(r)
 
 		if err != nil {
