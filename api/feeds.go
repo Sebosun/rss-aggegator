@@ -13,12 +13,18 @@ type GetFeedsPayload struct {
 	Url  string `json:"url"`
 }
 
+type FeedDupa struct {
+	ID   int32  `json:"id"`
+	Name string `json:"name"`
+	Url  string `json:"url"`
+}
+
 type Feed struct {
 	ID        int32     `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
 	Name      string    `json:"name"`
 	Url       string    `json:"url"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func DBFeedToFeed(feed database.Feed) Feed {
@@ -29,6 +35,20 @@ func DBFeedToFeed(feed database.Feed) Feed {
 		Name:      feed.Name,
 		Url:       feed.Url,
 	}
+}
+func DBFeedsToFeedSlice(feeds []database.GetFeedsRow) []FeedDupa {
+	var acc []FeedDupa
+
+	for _, val := range feeds {
+		tmpStruct := FeedDupa{
+			ID:   val.ID,
+			Name: val.Name,
+			Url:  val.Url,
+		}
+		acc = append(acc, tmpStruct)
+	}
+
+	return acc
 }
 
 func (cfg *ApiConfig) CreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
@@ -57,4 +77,16 @@ func (cfg *ApiConfig) CreateFeed(w http.ResponseWriter, r *http.Request, user da
 	}
 
 	respondWithJson(w, 200, DBFeedToFeed(feed))
+}
+
+func (cfg *ApiConfig) GetFeeds(w http.ResponseWriter, r *http.Request) {
+
+	feed, err := cfg.DB.GetFeeds(r.Context())
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Someting went wrong")
+		return
+	}
+
+	respondWithJson(w, 200, DBFeedsToFeedSlice(feed))
 }

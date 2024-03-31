@@ -48,7 +48,9 @@ func main() {
 	mux.HandleFunc("GET /v1/user", apiConfig.MiddlewareAuth(apiConfig.GetUser))
 	mux.HandleFunc("POST /v1/user", apiConfig.CreateUser)
 
+	mux.HandleFunc("GET /v1/feeds", apiConfig.GetFeeds)
 	mux.HandleFunc("POST /v1/feeds", apiConfig.MiddlewareAuth(apiConfig.CreateFeed))
+
 	mux.HandleFunc("POST /v1/feed_follows", apiConfig.MiddlewareAuth(apiConfig.FollowFeed))
 
 	srv := &http.Server{
